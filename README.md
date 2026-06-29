@@ -1,5 +1,5 @@
 # Manajemen Artikel – Fullstack SPA (CI4 + Vue 3)  
-Praktikum Pemrograman Web 2 (Modul 11–14)
+Praktikum Pemrograman Web 2 
 
 Nama  : Rafli Dhiya Fadhaly  
 NIM   : 312410251  
