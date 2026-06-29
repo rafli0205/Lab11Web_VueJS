@@ -7,264 +7,295 @@ Kelas : I241B
 Dosen : Agung Nugroho, S.Kom., M.Kom.  
 
 ---
+# Laporan Praktikum Pemrograman Web 2  
+### Framework CodeIgniter 4 – Praktikum 1 sampai 10
 
-## 1. Deskripsi Proyek
-
-Proyek ini adalah aplikasi **Manajemen Artikel** yang dibangun dengan arsitektur **Decoupled** (frontend dan backend terpisah).  
-Backend menggunakan **CodeIgniter 4** sebagai **RESTful API Server**, sedangkan frontend menggunakan **VueJS 3** sebagai **Single Page Application (SPA)**.
-
-Fitur utama yang disediakan:
-- Manajemen data artikel (CRUD: create, read, update, delete).  
-- Tampilan data artikel secara reaktif tanpa reload halaman penuh.  
-- Navigasi SPA dengan Vue Router.  
-- Proteksi akses halaman admin menggunakan token.  
-- Keamanan end-to-end melalui kombinasi **CI4 Filter** dan **Axios Interceptor**.
-
-Proyek ini disusun sebagai bukti pengerjaan tugas Praktikum **Pemrograman Web 2** Modul 11–14.
+Repositori ini berisi hasil praktikum mata kuliah Pemrograman Web 2 dengan studi kasus aplikasi **Blog Sederhana** menggunakan framework CodeIgniter 4 pada project `lab11_ci/ci4`.  
+Setiap praktikum dikerjakan sesuai langkah pada modul, disertai penjelasan singkat dan screenshot perubahan yang dilakukan. [file:4][file:2][file:3]
 
 ---
 
-## 2. Teknologi yang Digunakan
+## Praktikum 1 – Instalasi CI4 & Konfigurasi Dasar
 
-- **Backend (API Server)**  
-  - Framework: **CodeIgniter 4 (CI4)** sebagai server **RESTful API**.  
-  - Pola: Resource Controller untuk operasi CRUD artikel.  
-  - Keamanan:
-    - **ApiAuthFilter** untuk memvalidasi header `Authorization: Bearer {token}`.  
-    - Konfigurasi **CORS** untuk mengizinkan request dari origin frontend yang berbeda port.
+**Tujuan:**  
+Memahami konsep dasar framework, MVC, struktur direktori CodeIgniter 4, serta konfigurasi environment dan layout dasar. [file:4]
 
-- **Frontend (SPA)**  
-  - Framework: **VueJS 3** (Single Page Application).  
-  - Routing: **Vue Router** dengan `meta: { requiresAuth: true }` dan **Navigation Guards**.  
-  - HTTP Client: **Axios** dengan **Request Interceptor** untuk menyisipkan token otomatis.  
-  - Penyimpanan client: **localStorage** untuk menyimpan token dan status login.
+**Langkah-langkah yang dilakukan:**
 
----
+1. Mengaktifkan ekstensi PHP di XAMPP  
+   - Mengedit `C:\xampp\php\php.ini` untuk mengaktifkan ekstensi yang dibutuhkan (`mysqli`, `intl`, dll).  
+   - Restart Apache dan MySQL dari XAMPP Control Panel.  
+   *(Screenshot: XAMPP & php.ini)* [file:4]
 
-## 3. Struktur Repository
+2. Instalasi CodeIgniter 4 secara manual  
+   - Ekstrak CI4 ke `C:\xampp\htdocs\lab11_ci\ci4`.  
+   - Mengakses `http://localhost/lab11_ci/ci4/public/` untuk memastikan CI4 tampil.  
+   *(Screenshot: tampilan default CodeIgniter 4)* [file:4]
 
-Struktur folder utama yang digunakan pada proyek:
+3. Konfigurasi environment  
+   - Mengubah nama file `env` menjadi `.env`.  
+   - Mengatur `CI_ENVIRONMENT = development` agar error detail muncul saat debug. [file:4]
 
-```text
-/lab8_vuejs               # Frontend SPA (VueJS 3)
-├─ components/            # Komponen UI (Navbar, ArtikelList, Footer, Login)
-├─ router/                # Vue Router (rute & navigation guards)
-├─ api/                   # Konfigurasi Axios & Request Interceptors
-└─ index.html             # Entry point SPA
+4. Konfigurasi `.env` dan baseURL  
+   - Menambahkan konfigurasi koneksi database ke `lab11_ci`.  
+   - Mengatur `app.baseURL = 'http://localhost/lab11_ci/ci4/public/'`.  
+   *(Screenshot: isi file `.env`)* [file:4]
 
-/lab7_php_ci              # Backend API (CodeIgniter 4)
-├─ app/Controllers/Api/   # ResourceController (CRUD Articles)
-├─ app/Filters/           # ApiAuthFilter (keamanan server-side)
-└─ app/Config/Routes.php  # Definisi endpoint RESTful API
-```
+5. Memahami struktur direktori CI4  
+   - Mempelajari fungsi folder `app`, `public`, `system`, `writable`, dan file `spark`. [file:4]
 
-- Folder **`lab7_php_ci/`** berisi konfigurasi CI4, controller API untuk artikel, filter autentikasi, dan routing.  
-- Folder **`lab8_vuejs/`** berisi file utama SPA (`index.html`), router, konfigurasi Axios, dan komponen UI (artikel, login, dll).
+6. Membuat routing, controller, dan view sederhana  
+   - Menambahkan route untuk `home`, `about`, `contact` di `app/Config/Routes.php`.  
+   - Membuat controller `Home` dan `Page` di `app/Controllers`.  
+   - Membuat view sederhana di `app/Views` untuk menampilkan teks.  
+   *(Screenshot: tampilan halaman Home/About/Contact)* [file:4]
 
----
-
-## 4. Modul 11–14 (Ringkasan Implementasi)
-
-### 4.1 Modul 11 – Integrasi VueJS 3 & API
-
-- Tujuan: Menampilkan data artikel secara **reaktif** tanpa hard reload.  
-- Implementasi:
-  - VueJS 3 mengambil data JSON artikel dari endpoint API CI4 menggunakan Axios.  
-  - Response di-bind ke variabel `articles` dalam komponen Vue.  
-  - Reaktivitas Vue 3 membuat perubahan pada array `articles` langsung tercermin di tampilan DOM.
-
-### 4.2 Modul 12 – Single Page Application (SPA) & Routing
-
-- Tujuan: Menghadirkan navigasi yang **instan** dan halus.  
-- Implementasi:
-  - Menggunakan **Vue Router** untuk memanage rute (misalnya: `/`, `/articles`, `/login`, `/admin`).  
-  - Halaman dipecah menjadi komponen modular & reusable (Navbar, ArtikelList, Login, Footer, dll).  
-  - Navigasi dilakukan dengan **swap komponen** di `<router-view />` tanpa reload penuh halaman.
-
-### 4.3 Modul 13 – Keamanan Client-Side (Navigation Guards)
-
-- Tujuan: Melindungi halaman admin agar hanya bisa diakses setelah login.  
-- Implementasi:
-  - Rute yang butuh autentikasi diberi `meta: { requiresAuth: true }`.  
-  - `router.beforeEach()` mengecek token di `localStorage` sebelum masuk rute tersebut.  
-  - Jika token tidak ada/tidak valid, user akan diarahkan ke halaman `/login`.
-
-### 4.4 Modul 14 – Keamanan End-to-End (Interceptors & Filters)
-
-- Tujuan: Mengamankan API dari akses ilegal (misalnya Postman/tools eksternal) dan menjaga alur autentikasi dari client ke server.  
-- Implementasi:
-  - **Server-Side (CI4 Filter)**  
-    - `ApiAuthFilter` mengecek header `Authorization` pada setiap request.  
-    - Jika tidak ada Bearer Token yang valid, server mengembalikan response `401 Unauthorized`.
-  - **Client-Side (Axios Interceptors)**  
-    - Request Interceptor menambahkan token dari `localStorage` ke header `Authorization` setiap request.  
-    - Kode di level komponen jadi lebih bersih karena tidak perlu menulis header token berulang-ulang.
+7. Membuat layout dan template  
+   - Menambahkan file `style.css` di folder `public`.  
+   - Membuat `app/Views/template/header.php` dan `footer.php` sebagai layout utama.  
+   - Mengubah view agar menggunakan `header` dan `footer` template.  
+   *(Screenshot: tampilan layout blog sederhana)* [file:4]
 
 ---
 
-## 5. Endpoint RESTful API (Ringkasan)
+## Praktikum 2 – CRUD Artikel (Model, Controller, View)
 
-Backend menyediakan endpoint CRUD artikel menggunakan ResourceController.
+**Tujuan:**  
+Memahami konsep Model dan CRUD (Create, Read, Update, Delete) pada tabel `artikel`. [file:2]
 
-Contoh endpoint utama:
+**Langkah-langkah yang dilakukan:**
 
-- **Artikel**
-  - `GET /api/articles` – mengambil list semua artikel.  
-  - `GET /api/articles/{id}` – mengambil detail artikel tertentu.  
-  - `POST /api/articles` – menambah artikel baru (butuh Bearer Token).  
-  - `PUT /api/articles/{id}` – mengupdate artikel (butuh Bearer Token).  
-  - `DELETE /api/articles/{id}` – menghapus artikel (butuh Bearer Token).
+1. Membuat database dan tabel `artikel`  
+   - Menggunakan database `lab11_ci`.  
+   - Membuat tabel `artikel` dengan field: `id`, `judul`, `isi`, `slug`, `gambar`, `status` dan timestamp.  
+   *(Screenshot: struktur tabel artikel di phpMyAdmin)* [file:2]
 
-Endpoint `POST`, `PUT`, dan `DELETE` diproteksi oleh **ApiAuthFilter** dan mewajibkan header `Authorization: Bearer {token}`.
+2. Membuat `ArtikelModel`  
+   - File: `app/Models/ArtikelModel.php`.  
+   - Menentukan `$table = 'artikel'`, `$primaryKey = 'id'`, dan `$allowedFields` sesuai kolom tabel. [file:2]
 
----
+3. Membuat controller `Artikel`  
+   - File: `app/Controllers/Artikel.php`.  
+   - Method `index()` untuk menampilkan daftar artikel.  
+   - Method `view($slug)` untuk menampilkan detail artikel berdasarkan slug.  
+   *(Screenshot: daftar artikel dan detail artikel)* [file:2]
 
-## 6. Implementasi Kode Kritis
+4. Membuat view `artikel/index.php` dan `artikeldetail.php`  
+   - Menampilkan judul, potongan isi, gambar, dan link ke detail.  
+   - Menggunakan layout template header/footer dari praktikum 1. [file:2]
 
-### 6.1 Axios Request Interceptor (Frontend)
+5. Membuat menu admin artikel  
+   - Method `adminIndex()` untuk daftar artikel di halaman admin.  
+   - View `artikel/admin_index.php` untuk menampilkan tabel artikel dengan tombol `Edit` dan `Delete`. [file:2]
 
-```js
-// Contoh file: /lab8_vuejs/api/axios.js
-import axios from 'axios';
-
-axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-export default axios;
-```
-
-Interceptor ini memastikan setiap request HTTP ke backend otomatis membawa header `Authorization` jika token tersedia di `localStorage`.
-
-### 6.2 API Auth Filter (Backend – CodeIgniter 4)
-
-```php
-// Contoh file: /lab7_php_ci/app/Filters/ApiAuthFilter.php
-namespace App\Filters;
-
-use CodeIgniter\HTTP\RequestInterface;
-use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\Filters\FilterInterface;
-use Config\Services;
-
-class ApiAuthFilter implements FilterInterface
-{
-    public function before(RequestInterface $request, $arguments = null)
-    {
-        $header = $request->getServer('HTTP_AUTHORIZATION');
-        $token  = str_replace('Bearer ', '', $header);
-
-        if (!$this->isTokenValid($token)) {
-            return Services::response()
-                ->setStatusCode(401)
-                ->setJSON([
-                    'status'  => 401,
-                    'message' => 'Unauthorized',
-                ]);
-        }
-    }
-
-    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
-    {
-        // Optional: post-processing response
-    }
-
-    private function isTokenValid(?string $token): bool
-    {
-        // TODO: Implementasi validasi token sesuai kebutuhan
-        return ! empty($token);
-    }
-}
-```
-
-Filter ini dipasang pada konfigurasi filter/routing CI4 untuk melindungi endpoint API penting.
+6. Implementasi tambah, ubah, dan hapus artikel  
+   - Method `add()`, `edit($id)`, dan `delete($id)` di controller `Artikel`.  
+   - View `artikelform_add.php` dan `artikelform_edit.php` untuk form input.  
+   *(Screenshot: form tambah, ubah, dan hasil penghapusan artikel)* [file:2]
 
 ---
 
-## 7. Keamanan Aplikasi
+## Praktikum 3 – Penyempurnaan Tampilan & Routing
 
-### 7.1 Keamanan Server-Side (Backend)
+**Tujuan:**  
+Menyempurnakan struktur tampilan front-end dan admin, serta pengaturan routing yang lebih rapi. [file:1][file:2]
 
-- Menggunakan **ApiAuthFilter** untuk memproteksi endpoint CRUD artikel.  
-- Hanya request dengan header `Authorization: Bearer {token}` yang valid yang diizinkan melakukan operasi tulis (POST/PUT/DELETE).  
-- Konfigurasi **CORS** di `app/Config/Filters.php` agar backend menerima request dari origin frontend (port berbeda).
+**Langkah-langkah yang dilakukan:**
 
-### 7.2 Keamanan Client-Side (Frontend)
+1. Menyusun ulang layout front dan admin  
+   - Menambahkan template khusus admin (`template/admin_header.php`, `template/admin_footer.php`).  
+   - Memisahkan tampilan front (user) dan admin.  
+   *(Screenshot: tampilan admin index artikel)* [file:2]
 
-- Menggunakan **Vue Router Navigation Guards** (`router.beforeEach`).  
-- Rute admin diberi `meta: { requiresAuth: true }`.  
-- Jika tidak ada token di `localStorage`, user akan diarahkan ke halaman `/login`.  
-- Token disimpan di `localStorage` supaya session login tetap aktif saat halaman direfresh.
+2. Menyesuaikan routing untuk artikel dan halaman lain  
+   - Menambah route `artikel` dan `artikel/(:any)` untuk detail.  
+   - Menambah group route `admin` untuk halaman admin artikel. [file:2]
 
----
-
-## 8. Kendala & Solusi
-
-- **CORS Policy**  
-  - Masalah: Frontend dan backend berjalan di port berbeda sehingga muncul error CORS.  
-  - Solusi: Mengaktifkan dan mengkonfigurasi CORS Filter di CI4 (`app/Config/Filters.php`) untuk mengizinkan origin frontend.
-
-- **State Management (Data Hilang Saat Refresh)**  
-  - Masalah: Setelah refresh, data login di memori hilang dan user harus login ulang.  
-  - Solusi: Menyimpan token di `localStorage`, lalu dibaca ulang saat inisialisasi aplikasi Vue dan di dalam interceptor/guard.
+3. Pengujian menu front dan admin  
+   - Mengakses `Home`, `Artikel`, `About`, `Contact` di front.  
+   - Mengakses `/admin/artikel` untuk halaman admin.  
+   *(Screenshot: navigasi header beserta link yang berfungsi)* [file:1][file:2]
 
 ---
 
-## 9. Cara Menjalankan Proyek
+## Praktikum 4 – Modul Login (Auth & Filter)
 
-### 9.1 Menjalankan Backend (CodeIgniter 4)
+**Tujuan:**  
+Membuat modul login sederhana dengan auth dan filter untuk membatasi akses ke halaman admin. [file:3]
 
-1. Masuk ke folder backend:  
-   ```bash
-   cd lab7_php_ci
-   ```
-2. Jalankan server pengembangan CI4:  
-   ```bash
-   php spark serve
-   ```
-3. Akses API melalui URL (contoh):  
-   ```text
-   http://localhost:8080/api/articles
-   ```
+**Langkah-langkah yang dilakukan:**
 
-### 9.2 Menjalankan Frontend (VueJS 3 SPA)
+1. Membuat tabel `user` di database `lab11_ci`  
+   - Field: `id`, `username`, `useremail`, `userpassword`.  
+   - Menambahkan index unik pada `useremail`.  
+   *(Screenshot: struktur tabel user di phpMyAdmin)* [file:3]
 
-1. Masuk ke folder frontend:  
-   ```bash
-   cd lab8_vuejs
-   ```
-2. Install dependency (jika menggunakan npm):  
-   ```bash
-   npm install
-   ```
-3. Jalankan aplikasi SPA:  
-   ```bash
-   npm run dev
-   ```
-4. Buka di browser (contoh default Vite):  
-   ```text
-   http://localhost:5173
-   ```
+2. Membuat `UserModel`  
+   - File: `app/Models/UserModel.php`.  
+   - Mengatur `$table = 'user'`, `$primaryKey = 'id'`, dan `$allowedFields` (`username`, `useremail`, `userpassword`). [file:3]
 
-Pastikan **base URL** Axios pada frontend mengarah ke URL backend (misalnya `http://localhost:8080`).
+3. Membuat seeder `UserSeeder`  
+   - File: `app/Database/Seeds/UserSeeder.php`.  
+   - Menambahkan data user admin (`admin@example.com`) dengan password yang di-hash (`password_hash('admin123', PASSWORD_DEFAULT)`).  
+   - Menjalankan seeder: `php spark db:seed UserSeeder`.  
+   *(Screenshot: hasil seeder di CLI dan data user di database)* [file:3]
+
+4. Membuat controller `User`  
+   - Method `login()` untuk proses login (cek email, verifikasi password, set session).  
+   - Method `logout()` untuk menghapus session dan redirect ke halaman login. [file:3]
+
+5. Membuat view `user/login.php`  
+   - Form login dengan input email dan password.  
+   - Menampilkan pesan error menggunakan `flashdata` jika login gagal.  
+   *(Screenshot: halaman login)* [file:3]
+
+6. Membuat filter `Auth`  
+   - File: `app/Filters/Auth.php`.  
+   - Mengecek session `logged_in`. Jika belum login, redirect ke `/user/login`. [file:3]
+
+7. Konfigurasi filter dan routes  
+   - Menambahkan filter `auth` di `app/Config/Filters.php`.  
+   - Menggunakan filter `auth` untuk group route `admin`.  
+   *(Screenshot: percobaan akses `/admin/artikel` sebelum dan sesudah login)* [file:3]
 
 ---
 
-## 10. Penutup
+## Praktikum 5 – Upload Gambar Artikel
 
-Proyek **Manajemen Artikel – Fullstack SPA (CI4 + Vue 3)** ini dibuat untuk mengimplementasikan:  
-- arsitektur **Decoupled** (backend–frontend terpisah),  
-- **RESTful API** dengan CodeIgniter 4,  
-- **Single Page Application** dengan VueJS 3,  
-- dan **keamanan end-to-end** menggunakan token, Filter CI4, serta Axios Interceptors.  
+**Tujuan:**  
+Menambahkan fitur upload gambar untuk artikel dan menyimpan file di folder `public/gambar`. [file:8]
 
-Dokumentasi ini dapat langsung digunakan sebagai isi `README.md` pada repository GitHub tugas Praktikum **Pemrograman Web 2**.
+**Langkah-langkah yang dilakukan:**
+
+1. Menyiapkan folder upload  
+   - Membuat folder `public/gambar` untuk menyimpan file gambar artikel. [file:8]
+
+2. Menambahkan field `gambar` di model dan form  
+   - Memastikan `ArtikelModel` menyertakan field `gambar` di `$allowedFields`.  
+   - Mengubah view form tambah/edit artikel supaya memiliki input type `file` (`<input type="file" name="gambar">`). [file:2][file:8]
+
+3. Mengubah controller `Artikel` untuk menangani upload  
+   - Pada method `add()` dan `edit()`, memproses file upload menggunakan `$this->request->getFile('gambar')`.  
+   - Menyimpan nama file gambar ke database dan memindahkan file ke folder `public/gambar`.  
+   *(Screenshot: form artikel dengan upload gambar dan tampilan artikel dengan gambar)* [file:8]
+
+---
+
+## Praktikum 6 – Relasi Artikel dan Kategori (Query Builder)
+
+**Tujuan:**  
+Menerapkan relasi **One-to-Many** antara tabel `kategori` dan `artikel`, serta menggunakan Query Builder untuk join data. [file:5]
+
+**Langkah-langkah yang dilakukan:**
+
+1. Membuat tabel `kategori`  
+   - Field: `idkategori`, `namakategori`, `slugkategori`.  
+   - Menggunakan database `lab11_ci`.  
+   *(Screenshot: struktur tabel kategori)* [file:5]
+
+2. Menambah foreign key di tabel `artikel`  
+   - Menambahkan field `idkategori` pada tabel `artikel`.  
+   - Menambahkan constraint `FOREIGN KEY (idkategori) REFERENCES kategori(idkategori)`.  
+   *(Screenshot: relasi artikel–kategori di phpMyAdmin)* [file:5]
+
+3. Membuat `KategoriModel`  
+   - File: `app/Models/KategoriModel.php`.  
+   - Menentukan `$table = 'kategori'`, `$primaryKey = 'idkategori'`, dan `$allowedFields` (`namakategori`, `slugkategori`). [file:5]
+
+4. Memodifikasi `ArtikelModel` untuk join kategori  
+   - Menambahkan method `getArtikelDenganKategori()` yang menggunakan Query Builder untuk join `artikel` dan `kategori`. [file:5]
+
+5. Memodifikasi controller `Artikel`  
+   - Method `index()` dan `adminIndex()` menggunakan data join untuk menampilkan nama kategori.  
+   - Menambahkan filter pencarian judul dan filter kategori di admin. [file:5]
+
+6. Memodifikasi view index dan admin  
+   - Menampilkan nama kategori pada daftar artikel.  
+   - Menambahkan dropdown kategori di form tambah/edit artikel dan di filter admin.  
+   *(Screenshot: daftar artikel dengan nama kategori dan form dengan pilihan kategori)* [file:5]
+
+---
+
+## Praktikum 7–8 – Pagination dan Search
+
+**Tujuan:**  
+Menambah fitur pencarian dan pagination untuk daftar artikel di halaman admin dan front-end. [file:7][file:10]
+
+**Langkah-langkah yang dilakukan:**
+
+1. Menambahkan pencarian judul artikel  
+   - Di controller `Artikel`, menambahkan parameter `q` dari request untuk keyword pencarian.  
+   - Menggunakan `like()` pada Query Builder jika keyword diisi. [file:5][file:10]
+
+2. Menambahkan filter kategori di admin  
+   - Mengambil `kategoriid` dari request dan menerapkan `where('artikel.idkategori', $kategoriid)` jika dipilih. [file:5]
+
+3. Menambahkan pagination  
+   - Menggunakan `paginate(10)` di model untuk membatasi jumlah artikel per halaman.  
+   - Menampilkan link pagination menggunakan `$pager->links()` di view admin. [file:10]
+
+4. Menyesuaikan tampilan  
+   - Menambahkan form pencarian dan filter kategori di `artikel/admin_index.php`.  
+   - Menampilkan hasil pencarian dan pagination di halaman admin.  
+   *(Screenshot: tampilan admin dengan search dan pagination)* [file:10]
+
+---
+
+## Praktikum 9 – AJAX Pagination dan Search
+
+**Tujuan:**  
+Mengimplementasikan pagination dan search menggunakan AJAX untuk meningkatkan user experience pada halaman admin artikel. [file:6]
+
+**Langkah-langkah yang dilakukan:**
+
+1. Menyiapkan endpoint AJAX di controller `Artikel`  
+   - Memodifikasi `adminIndex()` untuk mengembalikan partial view atau JSON jika request adalah AJAX (`$this->request->isAJAX()`). [file:6]
+
+2. Menambahkan script jQuery di view admin  
+   - Menangani event submit form pencarian dan klik link pagination.  
+   - Mengirim request AJAX ke endpoint admin artikel dan mengupdate isi tabel secara dinamis. [file:6]
+
+3. Menguji AJAX search dan pagination  
+   - Mengakses `/admin/artikel`.  
+   - Melakukan pencarian artikel dan berpindah halaman tanpa reload penuh.  
+   *(Screenshot: hasil AJAX search & pagination di admin)* [file:6]
+
+---
+
+## Praktikum 10 – Komponen & Penyempurnaan Blog
+
+**Tujuan:**  
+Menambahkan komponen seperti **artikel terkini** menggunakan Cell, serta menyempurnakan tampilan blog. [file:9][file:1]
+
+**Langkah-langkah yang dilakukan:**
+
+1. Membuat Cell `ArtikelTerkini`  
+   - File: `app/Cells/ArtikelTerkini.php`.  
+   - Meng-extend `CodeIgniter\View\Cells\Cell` dan menambahkan method `render(): string` untuk mengambil 5 artikel terbaru dan me-render view `components/artikel_terkini`. [file:1]
+
+2. Membuat view komponen artikel terkini  
+   - File: `app/Views/components/artikel_terkini.php`.  
+   - Menampilkan daftar judul artikel terkini dengan link ke detail. [file:9]
+
+3. Menyisipkan Cell di layout  
+   - Menggunakan `view_cell('App\Cells\ArtikelTerkini::render')` di layout front (misalnya di sidebar atau bawah konten). [file:9]
+
+4. Penyempurnaan tampilan dan navigasi  
+   - Menyesuaikan menu utama: `Home`, `Artikel`, `About`, `Contact`.  
+   - Menambahkan link ke halaman admin artikel dan halaman login.  
+   *(Screenshot: tampilan blog dengan komponen artikel terkini)* [file:9][file:1]
+
+---
+
+## Penutup
+
+Seluruh praktikum 1 sampai 10 telah diimplementasikan dalam satu project CodeIgniter 4 (`lab11_ci/ci4`) dengan studi kasus blog sederhana:  
+
+- Instalasi dan konfigurasi dasar CI4.  
+- CRUD artikel beserta upload gambar.  
+- Modul login dengan auth filter.  
+- Relasi artikel–kategori dan Query Builder.  
+- Pagination, search, dan AJAX untuk admin artikel.  
+- Komponen artikel terkini menggunakan Cell. [file:2][file:3][file:5][file:6][file:9]
+
+Setiap langkah telah didokumentasikan dalam README ini dan didukung oleh screenshot perubahan sesuai ketentuan modul. README akan diperbarui kembali saat praktikum 11–14/15 dikerjakan.
